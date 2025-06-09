@@ -1,0 +1,528 @@
+{
+  "profile": "tabular-data-package",
+  "resources": [
+    {
+      "profile": "tabular-data-resource",
+      "name": "main",
+      "flatterer_name": "main",
+      "title": "main",
+      "schema": {
+        "fields": [
+          {
+            "name": "_link",
+            "title": "_link",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "note",
+            "title": "note",
+            "type": "boolean",
+            "format": "boolean",
+            "count": 100
+          },
+          {
+            "name": "int_st",
+            "title": "int_st",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "int_c_ele",
+            "title": "int_c_ele",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "int_t_ele",
+            "title": "int_t_ele",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "int_f_elet",
+            "title": "int_f_elet",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "int_dt_ele",
+            "title": "int_dt_ele",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "int_l_terr",
+            "title": "int_l_terr",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "int_area",
+            "title": "int_area",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "int_dt_agg",
+            "title": "int_dt_agg",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "enti_ente_p_desc",
+            "title": "enti_ente_p_desc",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "enti_ente_p_cod",
+            "title": "enti_ente_p_cod",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "enti_ente_p_ele_m",
+            "title": "enti_ente_p_ele_m",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "enti_ente_p_ele_f",
+            "title": "enti_ente_p_ele_f",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "enti_ente_p_ele_t",
+            "title": "enti_ente_p_ele_t",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          }
+        ],
+        "primaryKey": "_link"
+      },
+      "path": "csv/main.csv"
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "scheda",
+      "flatterer_name": "scheda",
+      "title": "scheda",
+      "schema": {
+        "fields": [
+          {
+            "name": "_link",
+            "title": "_link",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "_link_main",
+            "title": "_link_main",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "cod",
+            "title": "cod",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "desc",
+            "title": "desc",
+            "type": "boolean",
+            "format": "boolean",
+            "count": 100
+          }
+        ],
+        "primaryKey": "_link",
+        "foreignKeys": [
+          {
+            "fields": "_link_main",
+            "reference": {
+              "resource": "main",
+              "fields": "_link"
+            }
+          }
+        ]
+      },
+      "path": "csv/scheda.csv"
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "enti_enti_f",
+      "flatterer_name": "enti_enti_f",
+      "title": "enti_enti_f",
+      "schema": {
+        "fields": [
+          {
+            "name": "_link",
+            "title": "_link",
+            "type": "string",
+            "format": "string",
+            "count": 530
+          },
+          {
+            "name": "_link_main",
+            "title": "_link_main",
+            "type": "string",
+            "format": "string",
+            "count": 530
+          },
+          {
+            "name": "tipo",
+            "title": "tipo",
+            "type": "string",
+            "format": "string",
+            "count": 530
+          },
+          {
+            "name": "desc",
+            "title": "desc",
+            "type": "string",
+            "format": "string",
+            "count": 530
+          },
+          {
+            "name": "cod",
+            "title": "cod",
+            "type": "number",
+            "format": "number",
+            "count": 530
+          },
+          {
+            "name": "ele_m",
+            "title": "ele_m",
+            "type": "number",
+            "format": "number",
+            "count": 530
+          },
+          {
+            "name": "ele_f",
+            "title": "ele_f",
+            "type": "number",
+            "format": "number",
+            "count": 530
+          },
+          {
+            "name": "ele_t",
+            "title": "ele_t",
+            "type": "number",
+            "format": "number",
+            "count": 530
+          }
+        ],
+        "primaryKey": "_link",
+        "foreignKeys": [
+          {
+            "fields": "_link_main",
+            "reference": {
+              "resource": "main",
+              "fields": "_link"
+            }
+          }
+        ]
+      },
+      "path": "csv/enti_enti_f.csv"
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "enti_enti_f_com_vot",
+      "flatterer_name": "enti_enti_f_com_vot",
+      "title": "enti_enti_f_com_vot",
+      "schema": {
+        "fields": [
+          {
+            "name": "_link",
+            "title": "_link",
+            "type": "string",
+            "format": "string",
+            "count": 2120
+          },
+          {
+            "name": "_link_enti_enti_f",
+            "title": "_link_enti_enti_f",
+            "type": "string",
+            "format": "string",
+            "count": 2120
+          },
+          {
+            "name": "_link_main",
+            "title": "_link_main",
+            "type": "string",
+            "format": "string",
+            "count": 2120
+          },
+          {
+            "name": "com",
+            "title": "com",
+            "type": "number",
+            "format": "number",
+            "count": 2120
+          },
+          {
+            "name": "dt_com",
+            "title": "dt_com",
+            "type": "number",
+            "format": "number",
+            "count": 2120
+          },
+          {
+            "name": "scheda",
+            "title": "scheda",
+            "type": "number",
+            "format": "number",
+            "count": 2120
+          },
+          {
+            "name": "enti_p",
+            "title": "enti_p",
+            "type": "number",
+            "format": "number",
+            "count": 2120
+          },
+          {
+            "name": "enti_t",
+            "title": "enti_t",
+            "type": "number",
+            "format": "number",
+            "count": 2120
+          },
+          {
+            "name": "perc",
+            "title": "perc",
+            "type": "string",
+            "format": "string",
+            "count": 2120
+          },
+          {
+            "name": "vot_m",
+            "title": "vot_m",
+            "type": "number",
+            "format": "number",
+            "count": 2120
+          },
+          {
+            "name": "vot_f",
+            "title": "vot_f",
+            "type": "number",
+            "format": "number",
+            "count": 2120
+          },
+          {
+            "name": "vot_t",
+            "title": "vot_t",
+            "type": "number",
+            "format": "number",
+            "count": 2120
+          },
+          {
+            "name": "perc_r",
+            "title": "perc_r",
+            "type": "boolean",
+            "format": "boolean",
+            "count": 2120
+          }
+        ],
+        "primaryKey": "_link",
+        "foreignKeys": [
+          {
+            "fields": "_link_enti_enti_f",
+            "reference": {
+              "resource": "enti_enti_f",
+              "fields": "_link"
+            }
+          },
+          {
+            "fields": "_link_main",
+            "reference": {
+              "resource": "main",
+              "fields": "_link"
+            }
+          }
+        ]
+      },
+      "path": "csv/enti_enti_f_com_vot.csv"
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "enti_ente_p_com",
+      "flatterer_name": "enti_ente_p_com",
+      "title": "enti_ente_p_com",
+      "schema": {
+        "fields": [
+          {
+            "name": "_link",
+            "title": "_link",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "_link_main",
+            "title": "_link_main",
+            "type": "string",
+            "format": "string",
+            "count": 100
+          },
+          {
+            "name": "cod_reg",
+            "title": "cod_reg",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "com_att",
+            "title": "com_att",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          },
+          {
+            "name": "num_com",
+            "title": "num_com",
+            "type": "number",
+            "format": "number",
+            "count": 100
+          }
+        ],
+        "primaryKey": "_link",
+        "foreignKeys": [
+          {
+            "fields": "_link_main",
+            "reference": {
+              "resource": "main",
+              "fields": "_link"
+            }
+          }
+        ]
+      },
+      "path": "csv/enti_ente_p_com.csv"
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "enti_ente_p_com_vot",
+      "flatterer_name": "enti_ente_p_com_vot",
+      "title": "enti_ente_p_com_vot",
+      "schema": {
+        "fields": [
+          {
+            "name": "_link",
+            "title": "_link",
+            "type": "string",
+            "format": "string",
+            "count": 400
+          },
+          {
+            "name": "_link_main",
+            "title": "_link_main",
+            "type": "string",
+            "format": "string",
+            "count": 400
+          },
+          {
+            "name": "com",
+            "title": "com",
+            "type": "number",
+            "format": "number",
+            "count": 400
+          },
+          {
+            "name": "dt_com",
+            "title": "dt_com",
+            "type": "number",
+            "format": "number",
+            "count": 400
+          },
+          {
+            "name": "scheda",
+            "title": "scheda",
+            "type": "number",
+            "format": "number",
+            "count": 400
+          },
+          {
+            "name": "enti_p",
+            "title": "enti_p",
+            "type": "number",
+            "format": "number",
+            "count": 400
+          },
+          {
+            "name": "enti_t",
+            "title": "enti_t",
+            "type": "number",
+            "format": "number",
+            "count": 400
+          },
+          {
+            "name": "perc",
+            "title": "perc",
+            "type": "string",
+            "format": "string",
+            "count": 400
+          },
+          {
+            "name": "vot_m",
+            "title": "vot_m",
+            "type": "number",
+            "format": "number",
+            "count": 400
+          },
+          {
+            "name": "vot_f",
+            "title": "vot_f",
+            "type": "number",
+            "format": "number",
+            "count": 400
+          },
+          {
+            "name": "vot_t",
+            "title": "vot_t",
+            "type": "number",
+            "format": "number",
+            "count": 400
+          },
+          {
+            "name": "perc_r",
+            "title": "perc_r",
+            "type": "boolean",
+            "format": "boolean",
+            "count": 400
+          }
+        ],
+        "primaryKey": "_link",
+        "foreignKeys": [
+          {
+            "fields": "_link_main",
+            "reference": {
+              "resource": "main",
+              "fields": "_link"
+            }
+          }
+        ]
+      },
+      "path": "csv/enti_ente_p_com_vot.csv"
+    }
+  ]
+}
