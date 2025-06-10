@@ -97,7 +97,7 @@ flatterer --force "${folder}"/../data/processing/RE/regioni.json "${folder}"/../
 mlr -S --icsv --ojsonl cut -f cod then uniq -a then sort -t cod "${folder}"/../data/output/regioni/csv/enti_enti_f.csv >"${folder}"/../data/codici-province.jsonl
 
 # Per ogni provincia, scarica i dati per i 5 referendum
-cat "${folder}"/../data/codici-province.jsonl | while read -r line; do
+cat "${folder}"/../data/codici-province.jsonl | while IFS= read -r line; do
 
   PR=$(echo "${line}" | jq -r '.cod')
   PR=$(echo "${PR}" | sed 's/,//g') # Rimuove eventuali virgole
@@ -135,7 +135,7 @@ done
 mlr -S --icsv --ojsonl cat then filter '$tipo_tras=="SZ"' "${folder}"/../resources/comuni_prov.csv >"${folder}"/../resources/comuni_prov.jsonl
 
 # Per ogni comune scarica i dati per i 5 referendum
-cat "${folder}"/../resources/comuni_prov.jsonl | while read -r line; do
+cat "${folder}"/../resources/comuni_prov.jsonl | while IFS= read -r line; do
 
   PR=$(echo "${line}" | jq -r '.enti_ente_p_cod')
   PR=$(echo "${PR}" | sed 's/,//g') # Rimuove eventuali virgole
