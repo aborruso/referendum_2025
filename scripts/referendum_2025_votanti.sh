@@ -132,7 +132,7 @@ cat "${folder}"/../data/codici-province.jsonl | while IFS= read -r line; do
 done
 
 # Filtra i comuni per i quali ci sono i dati sulle sezioni
-mlr -S --icsv --ojsonl cat then filter '$tipo_tras=="SZ"' "${folder}"/../resources/comuni_prov.csv >"${folder}"/../resources/comuni_prov.jsonl
+mlr -S --icsv --ojsonl cat then filter '$tipo_tras=="SZ"' "${folder}"/../resources/comuni_prov.csv >"${folder}"/../resources/comuni_prov_sz.jsonl
 
 # Per ogni comune scarica i dati per i 5 referendum
 while IFS= read -r line; do
@@ -173,4 +173,4 @@ while IFS= read -r line; do
       -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' >"${folder}"/../data/processing/CM/"${ref}"/"${PR}"/"${CM}".json
 
   done
-done < "${folder}"/../resources/comuni_prov.jsonl
+done < "${folder}"/../resources/comuni_prov_sz.jsonl
