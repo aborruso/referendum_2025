@@ -135,7 +135,7 @@ done
 mlr -S --icsv --ojsonl cat then filter '$tipo_tras=="SZ"' "${folder}"/../resources/comuni_prov.csv >"${folder}"/../resources/comuni_prov.jsonl
 
 # Per ogni comune scarica i dati per i 5 referendum
-cat "${folder}"/../resources/comuni_prov.jsonl | while IFS= read -r line; do
+while IFS= read -r line; do
 
   PR=$(echo "${line}" | jq -r '.enti_ente_p_cod')
   PR=$(echo "${PR}" | sed 's/,//g') # Rimuove eventuali virgole
@@ -173,4 +173,4 @@ cat "${folder}"/../resources/comuni_prov.jsonl | while IFS= read -r line; do
       -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' >"${folder}"/../data/processing/CM/"${ref}"/"${PR}"/"${CM}".json
 
   done
-done
+done < "${folder}"/../resources/comuni_prov.jsonl
