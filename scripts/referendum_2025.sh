@@ -1,19 +1,22 @@
 #!/bin/bash
 
+# Abilita modalità debug, uscita su errore, variabili non definite e fallimento pipe
 set -x
 set -e
 set -u
 set -o pipefail
 
+# Determina la cartella dello script corrente
 folder="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Crea le directory di output e processing se non esistono
 mkdir -p "${folder}"/../data/output
 mkdir -p "${folder}"/../data/processing
 mkdir -p "${folder}"/../data/processing/PR
 mkdir -p "${folder}"/../data/processing/RE
 mkdir -p "${folder}"/../data/processing/CM
 
-# crea un subfolder da 01 a 05 in "${folder}"/../data/processing/RE
+# Crea sottocartelle da 01 a 05 per RE, PR e CM
 for i in $(seq -f "%02g" 1 5); do
   mkdir -p "${folder}"/../data/processing/RE/"${i}"
 done
@@ -26,13 +29,16 @@ for i in $(seq -f "%02g" 1 5); do
   mkdir -p "${folder}"/../data/processing/CM/"${i}"
 done
 
-# clean anagrafica
+# Pulisce il file anagrafico dei comuni rimuovendo eventuali caratteri indesiderati
 sed -r 's/=*"//g' "${folder}"/../resources/codici-comuni.csv >"${folder}"/../data/codici-comuni.csv
 
+# Normalizza i nomi delle colonne tramite duckdb
 duckdb --csv -c "SELECT * FROM read_csv('${folder}/../data/codici-comuni.csv',normalize_names=true)" >"${folder}"/../data/tmp.csv
 
 mv "${folder}"/../data/tmp.csv "${folder}"/../data/codici-comuni.csv
 
+# Estrae i codici CM e PR dai codici elettorali
+# CM: caratteri 7-10, PR: caratteri 4-6
 duckdb --csv -c "
 SELECT
   *,
@@ -43,22 +49,24 @@ FROM read_csv('${folder}/../data/codici-comuni.csv');
 
 mv "${folder}"/../data/tmp.csv "${folder}"/../data/codici-comuni.csv
 
+# Converte il file dei comuni in formato JSONL
 mlr -S --icsv --ojsonl cat "${folder}"/../data/codici-comuni.csv >"${folder}"/../data/codici-comuni.jsonl
 
+# Estrae e ordina i codici delle province
 mlr -S --jsonl cut -f PR then uniq -a then sort -f PR "${folder}"/../data/codici-comuni.jsonl >"${folder}"/../data/codici-pr.jsonl
 
-# Loop through regions 01-20
+# Ciclo sulle regioni (01-20) e sui 5 referendum
 for region in $(seq -f "%02g" 1 20); do
-  # Loop through time points 1-5
+  # Ciclo sui 5 referendum
   for ref in $(seq -f "%02g" 1 5); do
 
-    # se "${folder}"/../data/processing/RE/"${ref}"/"${region}".json esiste, salta
+    # Se il file regionale esiste già, salta il download
     if [[ -f "${folder}"/../data/processing/RE/"${ref}"/"${region}".json ]]; then
       echo "File for RE ${ref} and region ${region} already exists, skipping..."
       continue
     fi
 
-    # Fetch data from API
+    # Scarica i dati regionali
     curl 'https://eleapi.interno.gov.it/siel/PX/votantiFI/DE/20250608/TE/09/SK/'"${ref}"'/RE/'"${region}"'' \
       -H 'accept: application/json, text/plain, */*' \
       -H 'accept-language: it,en-US;q=0.9,en;q=0.8' \
@@ -77,31 +85,33 @@ for region in $(seq -f "%02g" 1 20); do
   done
 done
 
-# unisci i file regionali
-
+# Unisce tutti i file regionali in un unico file JSON
 find "${folder}"/../data/processing/RE -type f -name '*.json' -print0 |
   xargs -0 jq -s '.' \
     >"${folder}"/../data/processing/RE/regioni.json
 
+# Appiattisce la struttura JSON per analisi tabellare
 flatterer --force "${folder}"/../data/processing/RE/regioni.json "${folder}"/../data/output/regioni
 
+# Estrae e ordina i codici delle province dal file regioni
 mlr -S --icsv --ojsonl cut -f cod then uniq -a then sort -t cod "${folder}"/../data/output/regioni/csv/enti_enti_f.csv >"${folder}"/../data/codici-province.jsonl
 
-# per ogni PR, scarica i dati
+# Per ogni provincia, scarica i dati per i 5 referendum
 cat "${folder}"/../data/codici-province.jsonl | while read -r line; do
 
   PR=$(echo "${line}" | jq -r '.cod')
-  # porta a doppio zero padded PR
+  PR=$(echo "${PR}" | sed 's/,//g') # Rimuove eventuali virgole
   PR=$(printf "%03d" "${PR}")
 
   for ref in $(seq -f "%02g" 1 5); do
 
-    # se "${folder}"/../data/processing/PR/"${PR}".json esiste, salta
+    # Se il file provinciale esiste già, salta il download
     if [[ -f "${folder}"/../data/processing/PR/"${ref}"/"${PR}".json ]]; then
       echo "File for PR ${PR} already exists, skipping..."
       continue
     fi
 
+    # Scarica i dati provinciali
     curl 'https://eleapi.interno.gov.it/siel/PX/votantiFI/DE/20250608/TE/09/SK/'"${ref}"'/PR/'"${PR}"'' \
       -H 'accept: application/json, text/plain, */*' \
       -H 'accept-language: it,en-US;q=0.9,en;q=0.8' \
@@ -121,19 +131,31 @@ cat "${folder}"/../data/codici-province.jsonl | while read -r line; do
 
 done
 
+# Filtra i comuni per i quali ci sono i dati sulle sezioni
 mlr -S --icsv --ojsonl cat then filter '$tipo_tras=="SZ"' "${folder}"/../resources/comuni_prov.csv >"${folder}"/../resources/comuni_prov.jsonl
 
+# Per ogni comune scarica i dati per i 5 referendum
 cat "${folder}"/../resources/comuni_prov.jsonl | while read -r line; do
 
   PR=$(echo "${line}" | jq -r '.enti_ente_p_cod')
+  PR=$(echo "${PR}" | sed 's/,//g') # Rimuove eventuali virgole
   PR=$(printf "%03d" "${PR}")
   CM=$(echo "${line}" | jq -r '.cod')
+  CM=$(echo "${CM}" | sed 's/,//g') # Rimuove eventuali virgole
   CM=$(printf "%04d" "${CM}")
 
   for ref in $(seq -f "%02g" 1 5); do
 
-  mkdir -p "${folder}"/../data/processing/CM/"${ref}"/"${PR}"
+    # Crea la directory per referendum e provincia, se non esiste
+    mkdir -p "${folder}"/../data/processing/CM/"${ref}"/"${PR}"
 
+    # se "${folder}"/../data/processing/CM/"${ref}"/"${PR}"/"${CM}".json esiste già, salta il download
+    if [[ -f "${folder}"/../data/processing/CM/"${ref}"/"${PR}"/"${CM}".json ]]; then
+      echo "File for CM ${CM} in PR ${PR} already exists, skipping..."
+      continue
+    fi
+
+    # Scarica i dati comunali
     curl 'https://eleapi.interno.gov.it/siel/PX/votantiFIZ/DE/20250608/TE/09/SK/'"${ref}"'/PR/'"${PR}"'/CM/'"${CM}"'' \
       -H 'accept: application/json, text/plain, */*' \
       -H 'accept-language: it,en-US;q=0.9,en;q=0.8' \
